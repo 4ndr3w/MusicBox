@@ -2,12 +2,55 @@
 <head>
 	<title>MusicBox</title>
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript">
+	var musicList = new Array();
+	
+	var socket = io.connect("http://localhost");
+	
+	function init()
+	{
+		$("#search").bind("propertychange keyup input paste", function()
+		{
+			buildOutput($(this).val());
+			
+		});
+	}
+	
+	function buildOutput(matches)
+	{
+		output = "";
+		matches = matches.toLowerCase();
+		for ( i = 0; i < musicList.length; i++ )
+		{
+			
+			thisSong = musicList[i];
+			if ( matches != undefined && matches.trim() != "" )
+			{
+				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 )
+					output += thisSong.title+" - "+thisSong.album+" - "+thisSong.artist+"<br>";
+			}
+			else
+				output += thisSong.title+" - "+thisSong.album+" - "+thisSong.artist+"<br>";
+			
+			
+		}
+		document.getElementById("list").innerHTML = output;
+	}
+	
+	
+	socket.on("resync", function(data)
+	{
+		musicList = data;
+		buildOutput(undefined);
+	});
 	
 	</script>
 </head>
 
-<body>
-	
+<body onLoad="init()">
+	<input type="text" id="search"></input>
+	<div id="list">
+	</div>
 </body>
 </html>
