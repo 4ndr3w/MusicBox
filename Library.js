@@ -3,23 +3,40 @@ var song = require("./Song");
 var libraryPath = "";
 var music = new Array();
 
-function init(path)
+function init(path, readyCallback)
 {
 	libraryPath = path;
-	console.log(path);
-	songs = fs.readdirSync(path);
-	console.log(songs);
-	for (var i = 0; i < songs.length; i++ )
-	{
-		music.push(new song.process(path+"/"+songs[i]));
-	}	
+	
+	fs.readFile(path, function (err, data) {
+		if ( !err )
+		{
+			list = data.toString().trim().split("\n");
+			for ( i = 0; i < list.length; i++ )
+			{
+				thisSong = list[i].split(",");
+				music.push(new song.process(i, thisSong[0], thisSong[1], thisSong[2], thisSong[3]));
+			}
+			if ( readyCallback != null )
+				readyCallback();
+		}
+	});
+}
+
+
+function getSongByID(id)
+{
+	return music[id];
 }
 
 function getLibrary()
 {
-	return music;
+	var output = [];
+	for ( i = 0; i < music.length; i++  )
+		output.push(music[i].getDataForAPI());
+	return output;
 }
 
 
 exports.init = init;
 exports.getLibrary = getLibrary;
+exports.getSongByID = getSongByID;

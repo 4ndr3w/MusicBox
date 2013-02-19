@@ -1,18 +1,49 @@
 var fs = require('fs'),
-    musicmetadata = require('musicmetadata');
+    mm = require('musicmetadata'),
+	library = require("./Library");
 
-function Song(path)
+function Song(id, title, artist, album, path)
 {
-	this.metadata = null;
-	
-	var parser = new musicmetadata(fs.createReadStream(path));
-	parser.on("metadata", function (result) {
-		this.metadata = result;
-	});
-	
+	this.id = id;
+	this.title = title.trim();
+	this.artist = artist.trim();
+	this.album = album.trim();
+	this.path = path;
+
+	this.getID = function()
+	{
+		return this.id;
+	}
+
 	this.getTitle = function()
 	{
-		return this.metadata.title;
+		if ( this.title == "" )
+			return "Unknown";
+		return this.title;
+	}
+	
+	this.getArtist = function()
+	{
+		if ( this.artist == "")
+			return "Unknown";
+		return this.artist;
+	}
+	
+	this.getAlbum = function()
+	{
+		if ( this.album == "" )
+			return "Unknown";
+		return this.album;
+	}
+	
+	this.getPath = function()
+	{
+		return this.path;
+	}
+	
+	this.getDataForAPI = function()
+	{
+		return {id:this.getID(), title:this.getTitle(), artist:this.getArtist(), album:this.getAlbum()};
 	}
 }
 
