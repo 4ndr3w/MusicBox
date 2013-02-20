@@ -1,7 +1,7 @@
 var fs = require('fs'),
 	library = require("./Library");
 
-function Song(id, title, artist, album, path)
+function Song(id, title, album, artist, path)
 {
 	this.id = id;
 	this.title = title.trim();
@@ -43,6 +43,11 @@ function Song(id, title, artist, album, path)
 	this.getDataForAPI = function()
 	{
 		return {id:this.getID(), title:this.getTitle(), artist:this.getArtist(), album:this.getAlbum()};
+	}
+	
+	this.toString = function()
+	{
+		return this.getTitle()+" - "+this.getAlbum()+" - "+this.getArtist();
 	}
 }
 

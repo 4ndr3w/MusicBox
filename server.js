@@ -4,12 +4,13 @@ var app = express();
 var library = require("./Library");
 var server = require("http").createServer(app);
 var io = socketio.listen(server)
-
+var queue = require("./MusicQueue");
+io.set('log level', 1);
 /* Frontend */
 app.use("/frontend", express.static("./frontend"));
 
 app.get("/", function(req,res) {
-	res.redirect("frontend/test.html");
+	res.redirect("frontend");
 });
 
 /* API */
@@ -17,6 +18,11 @@ app.get("/api/library", function(req,res){
 	res.json(library.getLibrary());
 });
 
+
+queue.setChangeCallback(function() 
+{
+	io.sockets.emit("queueChanged", queue.getSendable());
+});
 
 
 
@@ -28,5 +34,9 @@ library.init("library.csv", function()
 
 
 io.sockets.on('connection', function (socket) {
-	socket.emit("resync", library.getLibrary());
+	socket.emit("resync", {library:library.getLibrary(), queue:queue.getQueue()});
+	socket.on("addToQueue", function (songid)
+	{
+		queue.addToQueue(library.getSongByID(songid));
+	});
 });

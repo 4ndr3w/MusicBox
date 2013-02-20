@@ -1,26 +1,146 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title>MusicBox</title>
+	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript">
-	var musicList = new Array();
 	
+	<style type="text/css">
+	body
+	{
+		background-color: black;
+	}
+	#container
+	{
+		margin-top: 20px;
+	}
+	#header
+	{
+		background-color: green;
+		width: 700px;
+		height: 40px;
+		margin: auto;
+		color: white;
+		font-family:sans-serif;
+	}
+	#header-left
+	{
+		margin-top:10px;
+		float: left;
+		color: inherit;
+		margin-left: 10px;
+	}
+	#header-right
+	{
+		float: right;
+		display: block;
+		margin-top:10px;
+		margin-right: 10px;
+		color: inherit;
+	}
+	
+	a:link {color:white;text-decoration:none;}
+	a:visited {color:white;text-decoration:none;} 
+	a:hover {color:white;text-decoration:none;} 
+	a:active {color:white;text-decoration:none;}
+	
+	#contentbox
+	{
+		margin:auto;
+		margin-top: 25px;
+		border-style:dashed;
+		border-width:1px;
+		border-color: green;
+		width: 700px;
+		color:white;
+	}
+	
+	.contentArea
+	{	
+		margin-top:10px;
+		font-size:15px;
+	}
+	
+	.columnHeader
+	{
+		font-size: 20px;
+	}
+	
+	table
+	{
+		margin:auto;
+		table-layout: fixed;
+	}
+	#library
+	{
+		margin:auto;
+		text-align:center;
+	}
+	
+	#librarySearch
+	{
+		width:80%;
+	}
+	
+	th
+	{
+		width:260px;
+	}
+	
+	</style>
+	
+	<script type="text/javascript">
+	
+	function switchToLibrary()
+	{
+		document.getElementById("library").style.display="block";
+		document.getElementById("queue").style.display="none";
+	}
+	
+	function switchToQueue()
+	{
+		document.getElementById("library").style.display="none";
+		document.getElementById("queue").style.display="block";
+	}
+	
+	var musicList = new Array();
 	var socket = io.connect("http://localhost");
 	
 	function init()
 	{
-		$("#search").bind("propertychange keyup input paste", function()
+		switchToLibrary();
+		$("#librarySearch").bind("propertychange keyup input paste", function()
 		{
-			buildOutput($(this).val());
+			buildLibrary($(this).val());
 			
 		});
 	}
+
 	
-	function buildOutput(matches)
+	function queue(id)
+	{
+		thisSong = musicList[id];
+		if ( confirm("Queue \""+thisSong.title+"\" by "+thisSong.artist+"?") )
+			socket.emit("addToQueue", id);
+	}
+	
+	function stringForSong(obj)
+	{
+		return obj.title+" - "+obj.album+" - "+obj.artist;
+	}
+	
+	
+	function buildLibrary(matches)
 	{
 		output = "";
 		matches = matches.toLowerCase();
+		output += "<tr class=\"columnHeader\">";
+		output += "<th class=\"columnHeader\">Title</th>";
+		output += "<th class=\"columnHeader\">Album</th>";
+		output += "<th class=\"columnHeader\">Artist</th>";
+		output += "</tr>";
+		
 		for ( i = 0; i < musicList.length; i++ )
 		{
 			
@@ -28,29 +148,106 @@
 			if ( matches != undefined && matches.trim() != "" )
 			{
 				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 )
-					output += thisSong.title+" - "+thisSong.album+" - "+thisSong.artist+"<br>";
+				{
+					output += "<tr>";
+					output += "<th><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
+					output += "<th>"+thisSong.album+"</th>";
+					output += "<th>"+thisSong.artist+"</th>";
+					output += "<th>"+thisSong.artist+"</th>";
+					output += "</tr>";
+				}
 			}
 			else
-				output += thisSong.title+" - "+thisSong.album+" - "+thisSong.artist+"<br>";
+			{
+				output += "<tr>";
+				output += "<th><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
+				output += "<th>"+thisSong.album+"</th>";
+				output += "<th>"+thisSong.artist+"</th>";
+				output += "</tr>";
+				
+			}
 			
 			
 		}
-		document.getElementById("list").innerHTML = output;
+		document.getElementById("libraryTable").innerHTML = output;
 	}
 	
 	
+	function buildQueue(queue)
+	{
+		if ( queue.length <= 1 )
+		{
+			document.getElementById("queueTable").innerHTML = "Queue Empty<br><br>";
+			return;
+		}
+		
+		
+		output = "";
+		
+		output += "<tr class=\"columnHeader\">";
+		output += "<th class=\"columnHeader\">Title</th>";
+		output += "<th class=\"columnHeader\">Album</th>";
+		output += "<th class=\"columnHeader\">Artist</th>";
+		output += "</tr>";
+		
+		for ( i=0; i < queue.length; i++ )
+		{
+			thisSong = queue[i];
+			output += "<tr>";
+			output += "<th><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
+			output += "<th>"+thisSong.album+"</th>";
+			output += "<th>"+thisSong.artist+"</th>";
+			output += "</tr>";
+			
+		}
+		document.getElementById("queueTable").innerHTML = output;
+	}
+	
 	socket.on("resync", function(data)
 	{
-		musicList = data;
-		buildOutput(undefined);
+		musicList = data.library;
+		buildLibrary("");
+		buildQueue(data.queue);
+	});
+	
+	socket.on("queueChanged", function(data)
+	{
+		buildQueue(data);
 	});
 	
 	</script>
-</head>
+	
+	<script type="text/javascript">
 
+	
+	</script>
+	
+</head>
 <body onLoad="init()">
-	<input type="text" id="search"></input>
-	<div id="list">
+	<div id="container">
+		<div id="header">
+			<div id="header-left">MusicBox</div>
+			<div id="header-right"><a href="#" onClick="switchToLibrary()">Library</a> | <a href="#" onClick="switchToQueue()">Queue</a></div>
+				
+		</div>
+		<div id="contentbox">
+			
+			<div id="library" class="contentArea">
+				<br>
+				<input type="text" id="librarySearch" placeholder="Search Library" />
+				<br><br>
+				<table id="libraryTable">
+				</table>
+				<br>
+			</div>
+			
+			<div id="queue" class="contentArea">
+				<table id="queueTable">
+				</table>
+				
+			</div>
+		</div>
+		
 	</div>
 </body>
 </html>
