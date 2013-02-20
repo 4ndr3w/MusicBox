@@ -1,5 +1,4 @@
 var fs = require('fs'),
-    mm = require('musicmetadata'),
 	library = require("./Library");
 
 function Song(id, title, artist, album, path)
