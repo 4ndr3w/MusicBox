@@ -1,5 +1,10 @@
 var childprocess = require("child_process");
-var basePath = "/Applications/MPlayer OSX Extended.app/Contents/Resources/Binaries/mpextended.mpBinaries/Contents/mpextended.mpBinaries/Contents/MacOS/mplayer";
+
+// Use this if mplayer is in your PATH
+// var mPlayerPath = "mplayer"
+
+// OS X mplayer
+var mPlayerPath = "/Applications/MPlayer OSX Extended.app/Contents/Resources/Binaries/mpextended.mpBinaries/Contents/mpextended.mpBinaries/Contents/MacOS/mplayer";
 var currentlyPlaying = null;
 
 function playFile(path, callback)
@@ -9,7 +14,7 @@ function playFile(path, callback)
 		return false;
 	}
 	
-	currentlyPlaying = childprocess.spawn(basePath, new Array("-quiet", path), {env: process.env});
+	currentlyPlaying = childprocess.spawn(mPlayerPath, new Array("-quiet", path), {env: process.env});
 	
 	currentlyPlaying.on("exit", function(exitCode) {
 		currentlyPlaying = null;
