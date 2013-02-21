@@ -3,7 +3,7 @@
 import os
 import mutagen
 
-basePath = "/Users/andrew/Documents/TSAMusic";
+basePath = os.getcwd();
 songID = 0;
 
 def processSong(path):
