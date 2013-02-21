@@ -117,7 +117,7 @@
 	</style>
 	
 	<script type="text/javascript">
-	
+	var musicQueue = new Array();
 	function switchToLibrary()
 	{
 		document.getElementById("library").style.display="block";
@@ -146,6 +146,14 @@
 	
 	function queue(id)
 	{
+		for ( i = 0; i < musicQueue.length; i++ )
+		{
+			if ( musicQueue[i].id == id )
+			{
+				alert("\""+musicQueue[i].title+"\" is already in the queue.");
+				return;
+			}
+		}
 		thisSong = musicList[id];
 		if ( confirm("Queue \""+thisSong.title+"\" by "+thisSong.artist+"?") )
 			socket.emit("addToQueue", id);
@@ -194,6 +202,7 @@
 	
 	function buildQueue(queue)
 	{
+		musicQueue = queue;
 		if ( queue.length != 0 )
 			document.getElementById("statusBarNowPlaying").innerHTML = "Now Playing: \""+queue[0].title+"\" by "+queue[0].artist; 
 		else
