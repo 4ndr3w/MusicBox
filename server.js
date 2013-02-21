@@ -19,6 +19,18 @@ app.get("/api/library", function(req,res){
 	res.json(library.getLibrary());
 });
 
+app.get("/api/queue", function(req,res){
+	res.json(queue.getQueue());
+});
+
+app.get("/api/nowplaying", function(req,res){
+	q = queue.getQueue();
+	if ( q.length == 0 )
+		res.json({});
+	else
+		res.json(queue.getQueue()[0]);
+});
+
 
 queue.setChangeCallback(function() 
 {
