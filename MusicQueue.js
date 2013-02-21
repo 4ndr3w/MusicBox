@@ -2,6 +2,8 @@ var queue = new Array();
 var queueChangeCallback = null;
 var player = require("./MusicPlayer");
 var nowPlaying = null;
+var shuffle = false;
+var library = require("./Library");
 
 function setChangeCallback(callback)
 {
@@ -17,6 +19,10 @@ function queueChanged()
 		player.playFile(queue[0].path, function(){
 			advance();
 		});
+	}
+	if ( queue.length == 0 && shuffle )
+	{
+		addToQueue(library.getRandomSong());
 	}
 	if ( queueChangeCallback != null )
 		queueChangeCallback();
@@ -80,6 +86,15 @@ function pause()
 	player.pause();
 }
 
+function setShuffle(state)
+{
+	shuffle = state;
+	if ( shuffle && queue.length == 0 )
+	{
+		addToQueue(library.getRandomSong());
+	}
+}
+
 exports.setChangeCallback = setChangeCallback;
 exports.addToQueue = addToQueue;
 exports.getCurrentSong = getCurrentSong;
@@ -88,3 +103,4 @@ exports.getQueue = getQueue;
 exports.getSendable = getSendable;
 exports.skip = skip;
 exports.pause = pause;
+exports.setShuffle = setShuffle;

@@ -39,7 +39,13 @@ function getLibrary()
 	return output;
 }
 
+function getRandomSong()
+{
+	return music[Math.floor(Math.random()*music.length)];
+}
+
 
 exports.init = init;
 exports.getLibrary = getLibrary;
 exports.getSongByID = getSongByID;
+exports.getRandomSong = getRandomSong;

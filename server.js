@@ -48,5 +48,9 @@ io.sockets.on('connection', function (socket) {
 	{
 		queue.skip();
 	});
-	
+	socket.on("shuffle", function(state)
+	{
+		socket.broadcast.emit("shuffle", state);
+		queue.setShuffle(state);
+	});
 });

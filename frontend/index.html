@@ -107,11 +107,17 @@
 		float: left;
 	}
 	
-	#statusControls
+	#statusBarControls
 	{
 		margin-top: 10px;
 		margin-right: 7px;
 		float: right;
+	}
+	
+	#shuffleboxContainer
+	{
+		margin: auto;
+		text-align:center;
 	}
 	
 	</style>
@@ -204,9 +210,16 @@
 	{
 		musicQueue = queue;
 		if ( queue.length != 0 )
+		{
 			document.getElementById("statusBarNowPlaying").innerHTML = "Now Playing: \""+queue[0].title+"\" by "+queue[0].artist; 
+			document.getElementById("statusBarControls").style.display = "inline";
+		}
 		else
+		{
 			document.getElementById("statusBarNowPlaying").innerHTML = "Nothing playing";
+			document.getElementById("statusBarControls").style.display = "none";
+		}
+			
 			
 		if ( queue.length <= 1 )
 		{
@@ -246,6 +259,16 @@
 		socket.emit("pause");
 	}
 	
+	function setShuffle()
+	{
+		socket.emit("shuffle", document.getElementById("shufflebox").checked);
+	}
+	
+	socket.on("shuffle", function(data)
+	{
+		document.getElementById("shufflebox").checked = data;
+	});
+	
 	socket.on("resync", function(data)
 	{
 		musicList = data.library;
@@ -264,7 +287,7 @@
 <body onLoad="init()">
 	<div id="statusbar">
 		<div id="statusBarNowPlaying">Now Playing: ....</div>
-		<div id="statusControls"><input type="button" value="Play/Pause" onClick="pause()"> <input type="button" value="Skip" onClick="skip()"></div>
+		<div id="statusBarControls"><input type="button" value="Play/Pause" onClick="pause()"> <input type="button" value="Skip" onClick="skip()"></div>
 	</div>
 	
 	
@@ -287,7 +310,9 @@
 			<div id="queue" class="contentArea">
 				<table id="queueTable">
 				</table>
-				
+				<br>
+				<div id="shuffleboxContainer"><input type="checkbox" id="shufflebox" onClick="setShuffle()"><label for="shufflebox">Shuffle</label></div>
+				<br><br>
 			</div>
 		</div>
 		
