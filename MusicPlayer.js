@@ -1,15 +1,12 @@
 var childprocess = require("child_process");
+var playerPath = "mplayer"
 
-function MusicPlayer(mplayerPath)
+
+function playFile(path, callback)
 {
-	this.mplayerPath = mplayerPath;
-	this.playFile = function(path, callback)
-	{
-		childprocess.exec(this.mplayerPath, function(error, stdout, stderr) {
-			callback();
-		});
-	}
-	return this;
+	childprocess.exec(playerPath+" "+path, function(error, stdout, stderr) {
+		callback();
+	});
 }
 
-exports.MusicPlayer = MusicPlayer;
+exports.playFile = playFile;

@@ -19,6 +19,8 @@ function init(path, readyCallback)
 			if ( readyCallback != null )
 				readyCallback();
 		}
+		else
+			console.log("Failed to load library at "+path);
 	});
 }
 
