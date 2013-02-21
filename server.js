@@ -39,4 +39,13 @@ io.sockets.on('connection', function (socket) {
 	{
 		queue.addToQueue(library.getSongByID(songid));
 	});
+	socket.on("pause", function()
+	{
+		queue.pause();
+	});
+	socket.on("skip", function()
+	{
+		queue.skip();
+	});
+	
 });

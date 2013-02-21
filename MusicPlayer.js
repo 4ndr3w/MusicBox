@@ -7,9 +7,7 @@ var currentlyPlaying = null;
 function playFile(path, callback)
 {
 	if ( currentlyPlaying != null )
-	{
 		return false;
-	}
 	
 	currentlyPlaying = childprocess.spawn(mplayerPath, new Array("-quiet", path), {env: process.env});
 	
@@ -20,4 +18,22 @@ function playFile(path, callback)
 	
 }
 
+function skip()
+{
+	if ( currentlyPlaying == null )
+		return false;
+	currentlyPlaying.kill();
+}
+
+function pause()
+{
+	if ( currentlyPlaying == null )
+	{
+		return false;
+	}
+	currentlyPlaying.stdin.write(" ");
+}
+
 exports.playFile = playFile;
+exports.skip = skip;
+exports.pause = pause;

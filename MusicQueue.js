@@ -70,11 +70,21 @@ function getSendable()
 	return output;
 }
 
+function skip()
+{
+	player.skip();
+}
+
+function pause()
+{
+	player.pause();
+}
+
 exports.setChangeCallback = setChangeCallback;
 exports.addToQueue = addToQueue;
 exports.getCurrentSong = getCurrentSong;
 exports.getNextSong = getNextSong;
-exports.advance = advance;
-exports.advanceTo = advanceTo;
 exports.getQueue = getQueue;
 exports.getSendable = getSendable;
+exports.skip = skip;
+exports.pause = pause;
