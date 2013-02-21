@@ -1,6 +1,7 @@
 var queue = new Array();
 var queueChangeCallback = null;
-
+var player = require("./MusicPlayer");
+var nowPlaying = null;
 
 function setChangeCallback(callback)
 {
@@ -9,9 +10,18 @@ function setChangeCallback(callback)
 
 function queueChanged()
 {
+	if ( queue.length != 0 && nowPlaying != queue[0].id )
+	{
+		nowPlaying = queue[0].id;
+		console.log("Playing "+queue[0].path);
+		player.playFile(queue[0].path, function(){
+			advance();
+		});
+	}
 	if ( queueChangeCallback != null )
 		queueChangeCallback();
 }
+
 
 function addToQueue(song)
 {
