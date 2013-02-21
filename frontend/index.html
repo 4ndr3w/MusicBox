@@ -142,13 +142,7 @@
 		if ( confirm("Queue \""+thisSong.title+"\" by "+thisSong.artist+"?") )
 			socket.emit("addToQueue", id);
 	}
-	
-	function stringForSong(obj)
-	{
-		return obj.title+" - "+obj.album+" - "+obj.artist;
-	}
-	
-	
+
 	function buildLibrary(matches)
 	{
 		output = "";
@@ -192,6 +186,11 @@
 	
 	function buildQueue(queue)
 	{
+		if ( queue.length != 0 )
+			document.getElementById("statusBarNowPlaying").innerHTML = "Now Playing: \""+queue[0].title+"\" by "+queue[0].artist; 
+		else
+			document.getElementById("statusBarNowPlaying").innerHTML = "Nothing playing";
+			
 		if ( queue.length <= 1 )
 		{
 			document.getElementById("queueTable").innerHTML = "Queue Empty<br><br>";
@@ -231,11 +230,6 @@
 	{
 		buildQueue(data);
 	});
-	
-	</script>
-	
-	<script type="text/javascript">
-
 	
 	</script>
 	
