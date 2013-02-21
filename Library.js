@@ -1,13 +1,14 @@
 var fs = require('fs')
 var song = require("./Song");
+var config = require("./config");
 var libraryPath = "";
 var music = new Array();
 
-function init(path, readyCallback)
+function init(readyCallback)
 {
-	libraryPath = path;
+	libraryPath = config.config.libraryPath;
 	
-	fs.readFile(path, function (err, data) {
+	fs.readFile(libraryPath, function (err, data) {
 		if ( !err )
 		{
 			list = data.toString().trim().split("\n");
@@ -20,7 +21,7 @@ function init(path, readyCallback)
 				readyCallback();
 		}
 		else
-			console.log("Failed to load library at "+path);
+			console.log("Failed to load library at "+libraryPath);
 	});
 }
 

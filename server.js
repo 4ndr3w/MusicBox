@@ -3,6 +3,7 @@ var socketio = require("socket.io")
 var app = express();
 var library = require("./Library");
 var server = require("http").createServer(app);
+var config = require("./config");
 var io = socketio.listen(server)
 var queue = require("./MusicQueue");
 io.set('log level', 1);
@@ -26,10 +27,10 @@ queue.setChangeCallback(function()
 
 
 
-library.init("library.csv", function()
+library.init(function()
 {
 	console.log("Library ready!");
-	server.listen(8080);
+	server.listen(config.config.httpPort);
 });
 
 
