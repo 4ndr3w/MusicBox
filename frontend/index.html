@@ -87,8 +87,22 @@
 	th
 	{
 		width:260px;
+		font-family:monospace;
+		font-size: 12px;
+		padding:0;
+		margin:0;
 	}
 	
+	.rowA
+	{
+		background-color:black;
+	}
+	
+	.rowB
+	{
+		background-color:grey;
+	}
+
 	#statusbar
 	{
 		background-color: green;
@@ -118,6 +132,11 @@
 	{
 		margin: auto;
 		text-align:center;
+	}
+	
+	table, th, td
+	{
+		border: 0px;
 	}
 	
 	</style>
@@ -177,25 +196,27 @@
 		
 		for ( i = 0; i < musicList.length; i++ )
 		{
-			
+			colorClass = ((i%2)==0?"rowA":"rowB");
 			thisSong = musicList[i];
 			if ( matches != undefined && matches.trim() != "" )
 			{
 				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 )
 				{
+					
 					output += "<tr>";
-					output += "<th><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-					output += "<th>"+thisSong.album+"</th>";
-					output += "<th>"+thisSong.artist+"</th>";
+					output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
+					output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
+					output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
 					output += "</tr>";
+				
 				}
 			}
 			else
 			{
 				output += "<tr>";
-				output += "<th><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-				output += "<th>"+thisSong.album+"</th>";
-				output += "<th>"+thisSong.artist+"</th>";
+				output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
+				output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
+				output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
 				output += "</tr>";
 				
 			}
@@ -238,11 +259,12 @@
 		
 		for ( i=1; i < queue.length; i++ )
 		{
+			colorClass = ((i%2)==1?"rowA":"rowB");
 			thisSong = queue[i];
 			output += "<tr>";
-			output += "<th><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-			output += "<th>"+thisSong.album+"</th>";
-			output += "<th>"+thisSong.artist+"</th>";
+			output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
+			output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
+			output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
 			output += "</tr>";
 			
 		}
@@ -299,7 +321,7 @@
 		</div>
 		<div id="contentbox">
 			
-			<div id="library" class="contentArea">
+			<div id="library" class="contentArea" cellpadding="0">
 				<br>
 				<input type="text" id="librarySearch" placeholder="Search Library" />
 				<br><br>
