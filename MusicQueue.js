@@ -95,6 +95,11 @@ function setShuffle(state)
 	}
 }
 
+function isShuffled()
+{
+	return shuffle;
+}
+
 exports.setChangeCallback = setChangeCallback;
 exports.addToQueue = addToQueue;
 exports.getCurrentSong = getCurrentSong;
@@ -104,3 +109,4 @@ exports.getSendable = getSendable;
 exports.skip = skip;
 exports.pause = pause;
 exports.setShuffle = setShuffle;
+exports.isShuffled = isShuffled;

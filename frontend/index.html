@@ -274,6 +274,7 @@
 		musicList = data.library;
 		buildLibrary("");
 		buildQueue(data.queue);
+		document.getElementById("shufflebox").checked = data.shuffle;
 	});
 	
 	socket.on("queueChanged", function(data)

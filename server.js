@@ -47,7 +47,7 @@ library.init(function()
 
 
 io.sockets.on('connection', function (socket) {
-	socket.emit("resync", {library:library.getLibrary(), queue:queue.getQueue()});
+	socket.emit("resync", {library:library.getLibrary(), queue:queue.getQueue(), shuffle:queue.isShuffled()});
 	socket.on("addToQueue", function (songid)
 	{
 		queue.addToQueue(library.getSongByID(songid));
