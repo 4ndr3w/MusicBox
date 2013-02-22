@@ -20,11 +20,11 @@ app.get("/api/library", function(req,res){
 });
 
 app.get("/api/queue", function(req,res){
-	res.json(queue.getQueue());
+	res.json(queue.getDataForAPI());
 });
 
 app.get("/api/nowplaying", function(req,res){
-	q = queue.getQueue();
+	q = queue.getDataForAPI();
 	if ( q.length == 0 )
 		res.json({});
 	else
@@ -34,7 +34,7 @@ app.get("/api/nowplaying", function(req,res){
 
 queue.setChangeCallback(function() 
 {
-	io.sockets.emit("queueChanged", queue.getSendable());
+	io.sockets.emit("queueChanged", queue.getDataForAPI());
 });
 
 
