@@ -243,16 +243,18 @@
 		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
 		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Add'), header);
 		insertElementAt(header, document.getElementById('libraryTable'));
-		
+		numMatched = 0;
 		for ( i = 0; i < musicList.length; i++ ){
-			colorClass = ((i%2)==0?"rowA":"rowB");
+			
 			thisSong = musicList[i];
 			
 			if ( matches != undefined && matches.trim() != "" ){
 				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 ){
+					colorClass = ((numMatched%2)==0?"rowA":"rowB");
 					var row = new Song(thisSong, document.getElementById('libraryTable'), colorClass);
 					
 					row.build(true);
+					numMatched++;
 				}
 			}
 			else{
