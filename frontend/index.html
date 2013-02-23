@@ -80,12 +80,31 @@
 		text-align:center;
 	}
 	
+	#queue
+	{
+		margin:auto;
+		text-align:center;
+	}
+	
 	#librarySearch
 	{
 		width:80%;
 	}
 	
+	tr{
+		cursor:default;
+	}
+	
 	th
+	{
+		width:260px;
+		font-family:monospace;
+		font-size: 12px;
+		padding:0;
+		margin:0;
+	}
+	
+	td
 	{
 		width:260px;
 		font-family:monospace;
@@ -200,8 +219,9 @@
 				insertElementAt(this.title, this.row);
 				insertElementAt(this.album, this.row);
 				insertElementAt(this.artist, this.row);
-				insertElementAt(createElement('td', {'onclick':"queue(" + this.id + ")"}, 'Add'), this.row);
+				insertElementAt(createElement('td', null, null,createElement('button',{'onclick':"queue(" + this.id + ")",'style':'width:60%;'},'Add')), this.row);
 				insertElementAt(this.row, this.parent);
+				return;
 			}
 			
 			insertElementAt(this.title, this.row);
@@ -217,6 +237,13 @@
 		
 		matches = matches.toLowerCase();
 		
+		var header = createElement('tr');
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Add'), header);
+		insertElementAt(header, document.getElementById('libraryTable'));
+		
 		for ( i = 0; i < musicList.length; i++ ){
 			colorClass = ((i%2)==0?"rowA":"rowB");
 			thisSong = musicList[i];
@@ -229,14 +256,24 @@
 				}
 			}
 			else{
+				removeElement(header);
 				insertElementAt(createElement('div', null, 'Use the search bar to find music in the library'), document.getElementById('libraryTable'));
 				return;
 			}
 		}
 	}
 	
-	function buildQueue(queue)
-	{
+	function buildQueue(queue){
+		removeElement(document.getElementById('queueTable'));
+		insertElementAt(createElement('table', {'id':'queueTable'}), document.getElementById('queue'));
+		
+		var header = createElement('tr');
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Add'), header);
+		insertElementAt(header, document.getElementById('queueTable'));
+		
 		musicQueue = queue;
 		if ( queue.length != 0 ){
 			updateElementContent(document.getElementById('statusBarNowPlaying'), "Now Playing: "+queue[0].title+" by "+queue[0].artist);
@@ -250,11 +287,8 @@
 		if ( queue.length <= 1 )
 		{
 			updateElementContent(document.getElementById("queueTable"), 'Queue Empty');
-			
+			removeElement(header);
 			return;
-		}
-		else{
-			updateElementContent(document.getElementById("queueTable"), '');
 		}
 		
 		for ( i=1; i < queue.length; i++ )
