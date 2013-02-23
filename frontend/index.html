@@ -4,7 +4,8 @@
 	<title>MusicBox</title>
 	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/frontend/js/jquery.min.js"></script>
+	<script type="text/javascript" src="frontend/js/object.js"></script>
 	
 	<style type="text/css">
 	body
@@ -79,12 +80,31 @@
 		text-align:center;
 	}
 	
+	#queue
+	{
+		margin:auto;
+		text-align:center;
+	}
+	
 	#librarySearch
 	{
 		width:80%;
 	}
 	
+	tr{
+		cursor:default;
+	}
+	
 	th
+	{
+		width:260px;
+		font-family:monospace;
+		font-size: 12px;
+		padding:0;
+		margin:0;
+	}
+	
+	td
 	{
 		width:260px;
 		font-family:monospace;
@@ -183,92 +203,101 @@
 		if ( confirm("Queue \""+thisSong.title+"\" by "+thisSong.artist+"?") )
 			socket.emit("addToQueue", id);
 	}
-
-	function buildLibrary(matches)
-	{
-		output = "";
-		matches = matches.toLowerCase();
-		output += "<tr>";
-		output += "<th class=\"columnHeader\">Title</th>";
-		output += "<th class=\"columnHeader\">Album</th>";
-		output += "<th class=\"columnHeader\">Artist</th>";
-		output += "</tr>";
+	
+	function Song(song, par, style){
+		this.row = createElement('tr',{'class':style});
+		this.title = createElement('td', null, song.title);
+		this.album = createElement('td', null, song.album);
+		this.artist = createElement('td', null, song.artist);
+		this.id = song.id;
+		this.parent = par;
 		
-		for ( i = 0; i < musicList.length; i++ )
-		{
-			colorClass = ((i%2)==0?"rowA":"rowB");
-			thisSong = musicList[i];
-			if ( matches != undefined && matches.trim() != "" )
-			{
-				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 )
-				{
-					
-					output += "<tr>";
-					output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-					output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
-					output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
-					output += "</tr>";
+		this.build = function(que){
+			if(que){
+				this.row = createElement('tr',{'class':style, 'ondblclick':"queue(" + this.id + ")"});
 				
+				insertElementAt(this.title, this.row);
+				insertElementAt(this.album, this.row);
+				insertElementAt(this.artist, this.row);
+				insertElementAt(createElement('td', null, null,createElement('button',{'onclick':"queue(" + this.id + ")",'style':'width:60%;'},'Add')), this.row);
+				insertElementAt(this.row, this.parent);
+				return;
+			}
+			
+			insertElementAt(this.title, this.row);
+			insertElementAt(this.album, this.row);
+			insertElementAt(this.artist, this.row);
+			insertElementAt(this.row, this.parent);
+		}
+	}
+
+	function buildLibrary(matches){
+		removeElement(document.getElementById('libraryTable'));
+		insertElementAt(createElement('table', {'id':'libraryTable'}), document.getElementById('library'));
+		
+		matches = matches.toLowerCase();
+		
+		var header = createElement('tr');
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Add'), header);
+		insertElementAt(header, document.getElementById('libraryTable'));
+		numMatched = 0;
+		for ( i = 0; i < musicList.length; i++ ){
+			
+			thisSong = musicList[i];
+			
+			if ( matches != undefined && matches.trim() != "" ){
+				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 ){
+					colorClass = ((numMatched%2)==0?"rowA":"rowB");
+					var row = new Song(thisSong, document.getElementById('libraryTable'), colorClass);
+					
+					row.build(true);
+					numMatched++;
 				}
 			}
-			else
-			{
-				output += "<tr>";
-				output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-				output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
-				output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
-				output += "</tr>";
-				
+			else{
+				removeElement(header);
+				insertElementAt(createElement('div', null, 'Use the search bar to find music in the library'), document.getElementById('libraryTable'));
+				return;
 			}
-			
-			
 		}
-		document.getElementById("libraryTable").innerHTML = output;
 	}
 	
-	
-	function buildQueue(queue)
-	{
+	function buildQueue(queue){
+		removeElement(document.getElementById('queueTable'));
+		insertElementAt(createElement('table', {'id':'queueTable'}), document.getElementById('queue'));
+		
+		var header = createElement('tr');
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
+		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
+		insertElementAt(header, document.getElementById('queueTable'));
+		
 		musicQueue = queue;
-		if ( queue.length != 0 )
-		{
-			document.getElementById("statusBarNowPlaying").innerHTML = "Now Playing: \""+queue[0].title+"\" by "+queue[0].artist; 
-			document.getElementById("statusBarControls").style.display = "inline";
+		if ( queue.length != 0 ){
+			updateElementContent(document.getElementById('statusBarNowPlaying'), "Now Playing: "+queue[0].title+" by "+queue[0].artist);
+			setElement(document.getElementById('statusBarControls'), {'style':'inline;'});
 		}
-		else
-		{
-			document.getElementById("statusBarNowPlaying").innerHTML = "Nothing playing";
-			document.getElementById("statusBarControls").style.display = "none";
+		else{
+			updateElementContent(document.getElementById('statusBarNowPlaying'), 'Nothing Playing');
+			setElement(document.getElementById('statusBarControls'), {'style':'none;'});
 		}
-			
-			
+		
 		if ( queue.length <= 1 )
 		{
-			document.getElementById("queueTable").innerHTML = "Queue Empty<br><br>";
+			updateElementContent(document.getElementById("queueTable"), 'Queue Empty');
 			return;
 		}
-		
-		
-		output = "";
-		
-		output += "<tr>";
-		output += "<th class=\"columnHeader\">Title</th>";
-		output += "<th class=\"columnHeader\">Album</th>";
-		output += "<th class=\"columnHeader\">Artist</th>";
-		output += "</tr>";
 		
 		for ( i=1; i < queue.length; i++ )
 		{
 			colorClass = ((i%2)==1?"rowA":"rowB");
 			thisSong = queue[i];
-			output += "<tr>";
-			output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-			output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
-			output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
-			output += "</tr>";
-			
+			row = new Song(thisSong, document.getElementById('queueTable'), colorClass);
+			row.build(false);
 		}
-		document.getElementById("queueTable").innerHTML = output;
 	}
 	
 	function skip()
