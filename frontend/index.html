@@ -332,6 +332,11 @@
 		buildQueue(data);
 	});
 	
+	socket.on('disconnect', function()
+	{
+		updateElementContent(document.getElementById('statusBarNowPlaying'), "Disconnected from server");
+	});
+	
 	</script>
 	
 </head>
