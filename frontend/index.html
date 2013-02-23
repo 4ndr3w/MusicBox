@@ -5,6 +5,7 @@
 	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="frontend/js/object.js"></script>
 	
 	<style type="text/css">
 	body
@@ -183,49 +184,53 @@
 		if ( confirm("Queue \""+thisSong.title+"\" by "+thisSong.artist+"?") )
 			socket.emit("addToQueue", id);
 	}
-
-	function buildLibrary(matches)
-	{
-		output = "";
-		matches = matches.toLowerCase();
-		output += "<tr>";
-		output += "<th class=\"columnHeader\">Title</th>";
-		output += "<th class=\"columnHeader\">Album</th>";
-		output += "<th class=\"columnHeader\">Artist</th>";
-		output += "</tr>";
+	
+	function Song(song, par, style){
+		this.row = createElement('tr',{'class':style});
+		this.title = createElement('td', null, song.title);
+		this.album = createElement('td', null, song.album);
+		this.artist = createElement('td', null, song.artist);
+		this.id = song.id;
+		this.parent = par;
 		
-		for ( i = 0; i < musicList.length; i++ )
-		{
-			colorClass = ((i%2)==0?"rowA":"rowB");
-			thisSong = musicList[i];
-			if ( matches != undefined && matches.trim() != "" )
-			{
-				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 )
-				{
-					
-					output += "<tr>";
-					output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-					output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
-					output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
-					output += "</tr>";
+		this.build = function(que){
+			if(que){
+				this.row = createElement('tr',{'class':style, 'ondblclick':"queue(" + this.id + ")"});
 				
-				}
-			}
-			else
-			{
-				output += "<tr>";
-				output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-				output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
-				output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
-				output += "</tr>";
-				
+				insertElementAt(this.title, this.row);
+				insertElementAt(this.album, this.row);
+				insertElementAt(this.artist, this.row);
+				insertElementAt(createElement('td', {'onclick':"queue(" + this.id + ")"}, 'Add'), this.row);
+				insertElementAt(this.row, this.parent);
 			}
 			
 			
 		}
-		document.getElementById("libraryTable").innerHTML = output;
 	}
-	
+
+	function buildLibrary(matches){
+		removeElement(document.getElementById('libraryTable'));
+		insertElementAt(createElement('table', {'id':'libraryTable'}), document.getElementById('library'));
+		
+		matches = matches.toLowerCase();
+		
+		for ( i = 0; i < musicList.length; i++ ){
+			colorClass = ((i%2)==0?"rowA":"rowB");
+			thisSong = musicList[i];
+			
+			if ( matches != undefined && matches.trim() != "" ){
+				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 ){
+					var row = new Song(thisSong, document.getElementById('libraryTable'), colorClass);
+					
+					row.build(true);
+				}
+			}
+			else{
+				insertElementAt(createElement('div', null, 'Use the search bar to find music in the library'), document.getElementById('libraryTable'));
+				return;
+			}
+		}
+	}
 	
 	function buildQueue(queue)
 	{
