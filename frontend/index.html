@@ -271,7 +271,6 @@
 		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
 		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
 		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Add'), header);
 		insertElementAt(header, document.getElementById('queueTable'));
 		
 		musicQueue = queue;
@@ -287,7 +286,6 @@
 		if ( queue.length <= 1 )
 		{
 			updateElementContent(document.getElementById("queueTable"), 'Queue Empty');
-			removeElement(header);
 			return;
 		}
 		
