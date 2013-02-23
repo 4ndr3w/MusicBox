@@ -200,8 +200,7 @@
 			}
 		}
 		thisSong = musicList[id];
-		if ( confirm("Queue \""+thisSong.title+"\" by "+thisSong.artist+"?") )
-			socket.emit("addToQueue", id);
+		socket.emit("addToQueue", id);
 	}
 	
 	function Song(song, par, style){
