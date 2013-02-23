@@ -204,7 +204,10 @@
 				insertElementAt(this.row, this.parent);
 			}
 			
-			
+			insertElementAt(this.title, this.row);
+			insertElementAt(this.album, this.row);
+			insertElementAt(this.artist, this.row);
+			insertElementAt(this.row, this.parent);
 		}
 	}
 
@@ -235,45 +238,32 @@
 	function buildQueue(queue)
 	{
 		musicQueue = queue;
-		if ( queue.length != 0 )
-		{
-			document.getElementById("statusBarNowPlaying").innerHTML = "Now Playing: \""+queue[0].title+"\" by "+queue[0].artist; 
-			document.getElementById("statusBarControls").style.display = "inline";
+		if ( queue.length != 0 ){
+			updateElementContent(document.getElementById('statusBarNowPlaying'), "Now Playing: "+queue[0].title+" by "+queue[0].artist);
+			setElement(document.getElementById('statusBarControls'), {'style':'inline;'});
 		}
-		else
-		{
-			document.getElementById("statusBarNowPlaying").innerHTML = "Nothing playing";
-			document.getElementById("statusBarControls").style.display = "none";
+		else{
+			updateElementContent(document.getElementById('statusBarNowPlaying'), 'Nothing Playing');
+			setElement(document.getElementById('statusBarControls'), {'style':'none;'});
 		}
-			
-			
+		
 		if ( queue.length <= 1 )
 		{
-			document.getElementById("queueTable").innerHTML = "Queue Empty<br><br>";
+			updateElementContent(document.getElementById("queueTable"), 'Queue Empty');
+			
 			return;
 		}
-		
-		
-		output = "";
-		
-		output += "<tr>";
-		output += "<th class=\"columnHeader\">Title</th>";
-		output += "<th class=\"columnHeader\">Album</th>";
-		output += "<th class=\"columnHeader\">Artist</th>";
-		output += "</tr>";
+		else{
+			updateElementContent(document.getElementById("queueTable"), '');
+		}
 		
 		for ( i=1; i < queue.length; i++ )
 		{
 			colorClass = ((i%2)==1?"rowA":"rowB");
 			thisSong = queue[i];
-			output += "<tr>";
-			output += "<th class=\""+colorClass+"\"><a href=\"#\" onClick=\"queue("+thisSong.id+")\">"+thisSong.title+"</a></th>";
-			output += "<th class=\""+colorClass+"\">"+thisSong.album+"</th>";
-			output += "<th class=\""+colorClass+"\">"+thisSong.artist+"</th>";
-			output += "</tr>";
-			
+			row = new Song(thisSong, document.getElementById('queueTable'), colorClass);
+			row.build(false);
 		}
-		document.getElementById("queueTable").innerHTML = output;
 	}
 	
 	function skip()
