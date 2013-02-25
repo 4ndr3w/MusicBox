@@ -1,0 +1,139 @@
+body {
+	background-color: black;
+	margin: 0;
+}
+
+a:link {color:white;text-decoration:none;}
+a:visited {color:white;text-decoration:none;} 
+a:hover {color:white;text-decoration:none;} 
+a:active {color:white;text-decoration:none;}
+
+table {
+	margin:auto;
+	table-layout: fixed;
+}
+
+table, th, td {border: 0px;}
+
+tr {cursor:default;}
+	
+th {
+	width:260px;
+	font-family:monospace;
+	font-size: 12px;
+	padding:0;
+	margin:0;
+}
+	
+td {
+	width:260px;
+	font-family:monospace;
+	font-size: 12px;
+	padding:0;
+	margin:0;
+}
+
+#container {padding-top: 65px;}
+
+#header {
+	background-color: green;
+	width: 700px;
+	height: 40px;
+	margin: auto;
+	color: white;
+	font-family:sans-serif;
+}
+
+#header-left {
+	margin-top:10px;
+	float: left;
+	color: inherit;
+	margin-left: 10px;
+}
+
+#header-right {
+	float: right;
+	display: block;
+	margin-top:10px;
+	margin-right: 10px;
+	color: inherit;
+}
+	
+#contentbox {
+	margin:auto;
+	margin-top: 25px;
+	border-style:dashed;
+	border-width:1px;
+	border-color: green;
+	width: 700px;
+	color:white;
+}
+	
+#library {
+	display:none;
+	margin:auto;
+	text-align:center;
+}
+
+#library:target {
+	display:block;
+}
+	
+#queue {
+	display:none;
+	margin:auto;
+	text-align:center;
+}
+
+#queue:target {
+	display:block;
+}
+	
+#librarySearch {
+	width:80%;
+}
+
+#statusbar {
+	background-color: green;
+	width: 100%;
+	color:white;
+	font-family:monospace;
+	font-size: 14px;
+	height: 40px;
+	position: fixed;
+}
+	
+#statusBarNowPlaying {
+	margin-top: 10px;
+	margin-left: 7px;
+	float: left;
+}
+	
+#statusBarControls {
+	margin-top: 10px;
+	margin-right: 7px;
+	float: right;
+}
+	
+#shuffleboxContainer {
+	margin: auto;
+	text-align:center;
+}
+
+.rowA{
+	background-color:black;
+}
+	
+.rowB{
+	background-color:grey;
+}
+	
+.contentArea {	
+	margin-top:10px;
+	font-size:15px;
+}
+	
+.columnHeader {
+	font-size: 20px;
+}
+	

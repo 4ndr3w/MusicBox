@@ -2,342 +2,14 @@
 <html>
 <head>
 	<title>MusicBox</title>
+	<link rel="stylesheet" href="frontend/css/standard.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
 	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="/frontend/js/jquery.min.js"></script>
 	<script type="text/javascript" src="frontend/js/object.js"></script>
+	<script type="text/javascript" src="frontend/js/main.js"></script>
 	
-	<style type="text/css">
-	body
-	{
-		background-color: black;
-		margin: 0;
-	}
-	#container
-	{
-		padding-top: 65px;
-	}
-	#header
-	{
-		background-color: green;
-		width: 700px;
-		height: 40px;
-		margin: auto;
-		color: white;
-		font-family:sans-serif;
-	}
-	#header-left
-	{
-		margin-top:10px;
-		float: left;
-		color: inherit;
-		margin-left: 10px;
-	}
-	#header-right
-	{
-		float: right;
-		display: block;
-		margin-top:10px;
-		margin-right: 10px;
-		color: inherit;
-	}
-	
-	a:link {color:white;text-decoration:none;}
-	a:visited {color:white;text-decoration:none;} 
-	a:hover {color:white;text-decoration:none;} 
-	a:active {color:white;text-decoration:none;}
-	
-	#contentbox
-	{
-		margin:auto;
-		margin-top: 25px;
-		border-style:dashed;
-		border-width:1px;
-		border-color: green;
-		width: 700px;
-		color:white;
-	}
-	
-	.contentArea
-	{	
-		margin-top:10px;
-		font-size:15px;
-	}
-	
-	.columnHeader
-	{
-		font-size: 20px;
-	}
-	
-	table
-	{
-		margin:auto;
-		table-layout: fixed;
-	}
-	#library
-	{
-		margin:auto;
-		text-align:center;
-	}
-	
-	#queue
-	{
-		margin:auto;
-		text-align:center;
-	}
-	
-	#librarySearch
-	{
-		width:80%;
-	}
-	
-	tr{
-		cursor:default;
-	}
-	
-	th
-	{
-		width:260px;
-		font-family:monospace;
-		font-size: 12px;
-		padding:0;
-		margin:0;
-	}
-	
-	td
-	{
-		width:260px;
-		font-family:monospace;
-		font-size: 12px;
-		padding:0;
-		margin:0;
-	}
-	
-	.rowA
-	{
-		background-color:black;
-	}
-	
-	.rowB
-	{
-		background-color:grey;
-	}
-
-	#statusbar
-	{
-		background-color: green;
-		width: 100%;
-		color:white;
-		font-family:monospace;
-		font-size: 14px;
-		height: 40px;
-		position: fixed;
-	}
-	
-	#statusBarNowPlaying
-	{
-		margin-top: 10px;
-		margin-left: 7px;
-		float: left;
-	}
-	
-	#statusBarControls
-	{
-		margin-top: 10px;
-		margin-right: 7px;
-		float: right;
-	}
-	
-	#shuffleboxContainer
-	{
-		margin: auto;
-		text-align:center;
-	}
-	
-	table, th, td
-	{
-		border: 0px;
-	}
-	
-	</style>
-	
-	<script type="text/javascript">
-	var musicQueue = new Array();
-	function switchToLibrary()
-	{
-		document.getElementById("library").style.display="block";
-		document.getElementById("queue").style.display="none";
-	}
-	
-	function switchToQueue()
-	{
-		document.getElementById("library").style.display="none";
-		document.getElementById("queue").style.display="block";
-	}
-	
-	var musicList = new Array();
-	var socket = io.connect();
-	
-	function init()
-	{
-		switchToLibrary();
-		$("#librarySearch").bind("propertychange keyup input paste", function()
-		{
-			buildLibrary($(this).val());
-			
-		});
-	}
-
-	
-	function queue(id)
-	{
-		for ( i = 0; i < musicQueue.length; i++ )
-		{
-			if ( musicQueue[i].id == id )
-			{
-				alert("\""+musicQueue[i].title+"\" is already in the queue.");
-				return;
-			}
-		}
-		thisSong = musicList[id];
-		socket.emit("addToQueue", id);
-	}
-	
-	function Song(song, par, style){
-		this.row = createElement('tr',{'class':style});
-		this.title = createElement('td', null, song.title);
-		this.album = createElement('td', null, song.album);
-		this.artist = createElement('td', null, song.artist);
-		this.id = song.id;
-		this.parent = par;
-		
-		this.build = function(que){
-			if(que){
-				this.row = createElement('tr',{'class':style, 'ondblclick':"queue(" + this.id + ")"});
-				
-				insertElementAt(this.title, this.row);
-				insertElementAt(this.album, this.row);
-				insertElementAt(this.artist, this.row);
-				insertElementAt(createElement('td', null, null,createElement('button',{'onclick':"queue(" + this.id + ")",'style':'width:60%;'},'Add')), this.row);
-				insertElementAt(this.row, this.parent);
-				return;
-			}
-			
-			insertElementAt(this.title, this.row);
-			insertElementAt(this.album, this.row);
-			insertElementAt(this.artist, this.row);
-			insertElementAt(this.row, this.parent);
-		}
-	}
-
-	function buildLibrary(matches){
-		removeElement(document.getElementById('libraryTable'));
-		insertElementAt(createElement('table', {'id':'libraryTable'}), document.getElementById('library'));
-		
-		matches = matches.toLowerCase();
-		
-		var header = createElement('tr');
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Add'), header);
-		insertElementAt(header, document.getElementById('libraryTable'));
-		numMatched = 0;
-		for ( i = 0; i < musicList.length; i++ ){
-			
-			thisSong = musicList[i];
-			
-			if ( matches != undefined && matches.trim() != "" ){
-				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 ){
-					colorClass = ((numMatched%2)==0?"rowA":"rowB");
-					var row = new Song(thisSong, document.getElementById('libraryTable'), colorClass);
-					
-					row.build(true);
-					numMatched++;
-				}
-			}
-			else{
-				removeElement(header);
-				insertElementAt(createElement('div', null, 'Use the search bar to find music in the library'), document.getElementById('libraryTable'));
-				return;
-			}
-		}
-	}
-	
-	function buildQueue(queue){
-		removeElement(document.getElementById('queueTable'));
-		insertElementAt(createElement('table', {'id':'queueTable'}), document.getElementById('queue'));
-		
-		var header = createElement('tr');
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Title'), header);
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Album'), header);
-		insertElementAt(createElement('td', {'class':'columnHeader'}, 'Artist'), header);
-		insertElementAt(header, document.getElementById('queueTable'));
-		
-		musicQueue = queue;
-		if ( queue.length != 0 ){
-			updateElementContent(document.getElementById('statusBarNowPlaying'), "Now Playing: "+queue[0].title+" by "+queue[0].artist);
-			setElement(document.getElementById('statusBarControls'), {'style':'inline;'});
-		}
-		else{
-			updateElementContent(document.getElementById('statusBarNowPlaying'), 'Nothing Playing');
-			setElement(document.getElementById('statusBarControls'), {'style':'none;'});
-		}
-		
-		if ( queue.length <= 1 )
-		{
-			updateElementContent(document.getElementById("queueTable"), 'Queue Empty');
-			return;
-		}
-		
-		for ( i=1; i < queue.length; i++ )
-		{
-			colorClass = ((i%2)==1?"rowA":"rowB");
-			thisSong = queue[i];
-			row = new Song(thisSong, document.getElementById('queueTable'), colorClass);
-			row.build(false);
-		}
-	}
-	
-	function skip()
-	{
-		socket.emit("skip");
-	}
-	
-	function pause()
-	{
-		socket.emit("pause");
-	}
-	
-	function setShuffle()
-	{
-		socket.emit("shuffle", document.getElementById("shufflebox").checked);
-	}
-	
-	socket.on("shuffle", function(data)
-	{
-		document.getElementById("shufflebox").checked = data;
-	});
-	
-	socket.on("resync", function(data)
-	{
-		musicList = data.library;
-		buildLibrary("");
-		buildQueue(data.queue);
-		document.getElementById("shufflebox").checked = data.shuffle;
-	});
-	
-	socket.on("queueChanged", function(data)
-	{
-		buildQueue(data);
-	});
-	
-	socket.on('disconnect', function()
-	{
-		updateElementContent(document.getElementById('statusBarNowPlaying'), "Disconnected from server");
-	});
-	
-	</script>
 	
 </head>
 <body onLoad="init()">
@@ -346,29 +18,25 @@
 		<div id="statusBarControls"><input type="button" value="Play/Pause" onClick="pause()"> <input type="button" value="Skip" onClick="skip()"></div>
 	</div>
 	
-	
 	<div id="container">
 		<div id="header">
 			<div id="header-left">MusicBox</div>
-			<div id="header-right"><a href="#" onClick="switchToLibrary()">Library</a> | <a href="#" onClick="switchToQueue()">Queue</a></div>
+			<div id="header-right"><a href="#library">Library</a> | <a href="#queue">Queue</a></div>
 		</div>
 		<div id="contentbox">
 			
 			<div id="library" class="contentArea" cellpadding="0">
-				<br>
 				<input type="text" id="librarySearch" placeholder="Search Library" />
-				<br><br>
 				<table id="libraryTable">
 				</table>
-				<br>
 			</div>
 			
 			<div id="queue" class="contentArea">
 				<table id="queueTable">
 				</table>
-				<br>
-				<div id="shuffleboxContainer"><input type="checkbox" id="shufflebox" onClick="setShuffle()"><label for="shufflebox">Shuffle</label></div>
-				<br><br>
+				<div id="shuffleboxContainer">
+					<input type="checkbox" id="shufflebox" onClick="setShuffle()"><label for="shufflebox">Shuffle</label>
+				</div>
 			</div>
 		</div>
 		
