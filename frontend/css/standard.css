@@ -33,13 +33,13 @@ td {
 	margin:0;
 }
 
-#container {padding-top: 65px;}
-
 #header {
+	margin: auto;
+	margin-top: 65px;
 	background-color: green;
 	width: 700px;
 	height: 40px;
-	margin: auto;
+	
 	color: white;
 	font-family:sans-serif;
 }
@@ -101,6 +101,7 @@ td {
 	font-size: 14px;
 	height: 40px;
 	position: fixed;
+	top:0px;
 }
 	
 #statusBarNowPlaying {
