@@ -9,11 +9,10 @@ function init()
 	$("#librarySearch").bind("propertychange keyup input paste", function()
 	{
 		buildLibrary($(this).val());
-			
 	});
 }
 
-	
+
 function queue(id)
 {
 	for ( i = 0; i < musicQueue.length; i++ )

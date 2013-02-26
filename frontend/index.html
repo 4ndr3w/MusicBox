@@ -3,8 +3,6 @@
 <head>
 	<title>MusicBox</title>
 	<link rel="stylesheet" href="frontend/css/standard.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	
-	
 	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="/frontend/js/jquery.min.js"></script>
 	<script type="text/javascript" src="frontend/js/object.js"></script>
@@ -15,27 +13,29 @@
 <body onLoad="init()">
 	<div id="statusbar">
 		<div id="statusBarNowPlaying">Now Playing: ....</div>
-		<div id="statusBarControls"><input type="button" value="Play/Pause" onClick="pause()"> <input type="button" value="Skip" onClick="skip()"></div>
+		<div id="statusBarControls"><input type="button" value="Play/Pause" onClick="pause()"> <input type="button" value="Skip" onClick="skip()">
+		</div>
 	</div>
-	
 	<div id="container">
 		<div id="header">
 			<div id="header-left">MusicBox</div>
 			<div id="header-right"><a href="#library">Library</a> | <a href="#queue">Queue</a></div>
 		</div>
 		<div id="contentbox">
-			
-			<div id="library" class="contentArea" cellpadding="0">
-				<input type="text" id="librarySearch" placeholder="Search Library" />
-				<table id="libraryTable">
-				</table>
+			<div id='library'>
+				<div id="libraryContent" class="contentArea" cellpadding="0">
+					<input type="text" id="librarySearch" placeholder="Search Library" />
+					<table id="libraryTable">
+					</table>
+				</div>
 			</div>
-			
-			<div id="queue" class="contentArea">
-				<table id="queueTable">
-				</table>
-				<div id="shuffleboxContainer">
-					<input type="checkbox" id="shufflebox" onClick="setShuffle()"><label for="shufflebox">Shuffle</label>
+			<div id='queue'>
+				<div id="queueContent" class="contentArea">
+					<table id="queueTable">
+					</table>
+					<div id="shuffleboxContainer">
+						<input type="checkbox" id="shufflebox" onClick="setShuffle()"><label for="shufflebox">Shuffle</label>
+					</div>
 				</div>
 			</div>
 		</div>
