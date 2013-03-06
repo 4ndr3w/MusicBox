@@ -19,6 +19,17 @@ app.get("/api/library", function(req,res){
 	res.json(library.getLibrary());
 });
 
+app.get("/api/librarylist", function(req,res){
+	data = library.getLibrary();
+	output = "";
+	for ( i = 0; i < data.length; i++ )
+	{
+		output += data[i].title+"\n";
+	}
+	res.send(output);
+});
+
+
 app.get("/api/queue", function(req,res){
 	res.json(queue.getDataForAPI());
 });
