@@ -40,7 +40,7 @@ app.get("/api/queuelist", function(req,res){
 });
 
 app.get("/api/play", function(req,res){
-	queue.addToQueue(req.param("songID"));
+	queue.addToQueue(library.getSongByID(req.param("songID")));
 	res.send("OK");
 });
 
