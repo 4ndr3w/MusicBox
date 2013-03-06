@@ -29,6 +29,21 @@ app.get("/api/librarylist", function(req,res){
 	res.send(output);
 });
 
+app.get("/api/queuelist", function(req,res){
+	data = queue.getQueue();
+	output = "";
+	for ( i = 0; i < data.length; i++ )
+	{
+		output += data[i].title+"\n";
+	}
+	res.send(output);
+});
+
+app.get("/api/play", function(req,res){
+	queue.addToQueue(req.param("songID"));
+	res.send("OK");
+});
+
 
 app.get("/api/queue", function(req,res){
 	res.json(queue.getDataForAPI());
