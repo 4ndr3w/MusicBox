@@ -57,6 +57,16 @@ app.get("/api/nowplaying", function(req,res){
 		res.json(queue.getQueue()[0]);
 });
 
+api.get("/api/skip", function(req,res){
+	queue.skip();
+	res.send("OK");
+});
+
+api.get("/api/pause", function(req,res){
+	queue.skip();
+	res.send("OK");
+});
+
 
 queue.setChangeCallback(function() 
 {
