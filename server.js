@@ -19,7 +19,7 @@ app.get("/api/library", function(req,res){
 	res.json(library.getLibrary());
 });
 
-app.get("/api/librarylist", function(req,res){
+app.get("/api/android/library", function(req,res){
 	data = library.getLibrary();
 	output = "";
 	for ( i = 0; i < data.length; i++ )
@@ -29,7 +29,7 @@ app.get("/api/librarylist", function(req,res){
 	res.send(output);
 });
 
-app.get("/api/queuelist", function(req,res){
+app.get("/api/android/queue", function(req,res){
 	data = queue.getQueue();
 	output = "";
 	for ( i = 0; i < data.length; i++ )
@@ -37,6 +37,14 @@ app.get("/api/queuelist", function(req,res){
 		output += data[i].title+"\n";
 	}
 	res.send(output);
+});
+
+app.get("/api/android/nowplaying", function(req,res){
+	q = queue.getDataForAPI();
+	if ( q.length == 0 )
+		res.send("Nothing Playing\n\n\n");
+	else
+		res.send(q[0].title+"\n"+q[0].artist+"\n"+q[0].album+"\n");
 });
 
 app.get("/api/play", function(req,res){
