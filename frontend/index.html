@@ -248,7 +248,7 @@
 			thisSong = musicList[i];
 			
 			if ( matches != undefined && matches.trim() != "" ){
-				if ( thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 ){
+				if ( matches == "*" || thisSong.title.toLowerCase().search(matches) != -1 || thisSong.artist.toLowerCase().search(matches) != -1 || thisSong.album.toLowerCase().search(matches)!= -1 ){
 					colorClass = ((numMatched%2)==0?"rowA":"rowB");
 					var row = new Song(thisSong, document.getElementById('libraryTable'), colorClass);
 					
@@ -370,6 +370,7 @@
 				<div id="shuffleboxContainer"><input type="checkbox" id="shufflebox" onClick="setShuffle()"><label for="shufflebox">Shuffle</label></div>
 				<br><br>
 			</div>
+
 		</div>
 		
 	</div>
